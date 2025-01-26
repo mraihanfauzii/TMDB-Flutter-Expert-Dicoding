@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:ditonton/data/models/movie_table.dart';
+import 'package:ditonton/data/models/tv_table.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -13,14 +13,13 @@ class DatabaseHelper {
 
   static Database? _database;
 
+  static const String _tblWatchlist = 'watchlist';
+  static const String _tblWatchlistTv = 'watchlist_tv';
+
   Future<Database?> get database async {
-    if (_database == null) {
-      _database = await _initDb();
-    }
+    _database ??= await _initDb();
     return _database;
   }
-
-  static const String _tblWatchlist = 'watchlist';
 
   Future<Database> _initDb() async {
     final path = await getDatabasesPath();
@@ -35,6 +34,15 @@ class DatabaseHelper {
       CREATE TABLE  $_tblWatchlist (
         id INTEGER PRIMARY KEY,
         title TEXT,
+        overview TEXT,
+        posterPath TEXT
+      );
+    ''');
+
+    await db.execute('''
+      CREATE TABLE $_tblWatchlistTv (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
         overview TEXT,
         posterPath TEXT
       );
@@ -74,6 +82,39 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> results = await db!.query(_tblWatchlist);
 
+    return results;
+  }
+
+  Future<int> insertWatchlistTv(TvTable tv) async {
+    final db = await database;
+    return await db!.insert(_tblWatchlistTv, tv.toJson());
+  }
+
+  Future<int> removeWatchlistTv(TvTable tv) async {
+    final db = await database;
+    return await db!.delete(
+      _tblWatchlistTv,
+      where: 'id = ?',
+      whereArgs: [tv.id],
+    );
+  }
+
+  Future<Map<String, dynamic>?> getTvById(int id) async {
+    final db = await database;
+    final results = await db!.query(
+      _tblWatchlistTv,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (results.isNotEmpty) {
+      return results.first;
+    }
+    return null;
+  }
+
+  Future<List<Map<String, dynamic>>> getWatchlistTvs() async {
+    final db = await database;
+    final results = await db!.query(_tblWatchlistTv);
     return results;
   }
 }
