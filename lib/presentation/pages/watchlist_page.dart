@@ -1,11 +1,15 @@
-import 'package:ditonton/common/state_enum.dart';
-import 'package:ditonton/common/utils.dart';
-import 'package:ditonton/presentation/provider/watchlist_movie_notifier.dart';
-import 'package:ditonton/presentation/provider/watchlist_tv_notifier.dart';
-import 'package:ditonton/presentation/widgets/movie_card.dart';
-import 'package:ditonton/presentation/widgets/tv_card.dart';
+import 'package:core/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:core/utils/state_enum.dart';
+import 'package:movie/presentation/bloc/watchlist_movie/watchlist_movie_bloc.dart';
+import 'package:movie/presentation/bloc/watchlist_movie/watchlist_movie_state.dart';
+import 'package:movie/presentation/bloc/watchlist_movie/watchlist_movie_event.dart';
+import 'package:movie/presentation/widgets/movie_card.dart';
+import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_bloc.dart';
+import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_state.dart';
+import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_event.dart';
+import 'package:tv/presentation/widgets/tv_card.dart';
 
 class WatchlistPage extends StatefulWidget {
   const WatchlistPage({super.key});
@@ -22,12 +26,9 @@ class _WatchlistPageState extends State<WatchlistPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    Future.microtask(() {
-      Provider.of<WatchlistMovieNotifier>(context, listen: false)
-          .fetchWatchlistMovies();
-      Provider.of<WatchlistTvNotifier>(context, listen: false)
-          .fetchWatchlistTvs();
-    });
+    // Kirim event untuk mengambil data watchlist
+    context.read<WatchlistMovieBloc>().add(FetchWatchlistMovies());
+    context.read<WatchlistTvBloc>().add(FetchWatchlistTv());
   }
 
   @override
@@ -45,10 +46,8 @@ class _WatchlistPageState extends State<WatchlistPage>
 
   @override
   void didPopNext() {
-    Provider.of<WatchlistMovieNotifier>(context, listen: false)
-        .fetchWatchlistMovies();
-    Provider.of<WatchlistTvNotifier>(context, listen: false)
-        .fetchWatchlistTvs();
+    context.read<WatchlistMovieBloc>().add(FetchWatchlistMovies());
+    context.read<WatchlistTvBloc>().add(FetchWatchlistTv());
   }
 
   @override
@@ -74,47 +73,52 @@ class _WatchlistPageState extends State<WatchlistPage>
     );
   }
 
+  /// Perbaikan:
+  /// Di sini kita gunakan properti `movies` pada WatchlistMovieState
+  /// karena untuk watchlist movie state kita mendefinisikan daftar film dengan nama `movies`
   Widget _buildMoviesWatchlist() {
-    return Consumer<WatchlistMovieNotifier>(
-      builder: (context, data, child) {
-        if (data.watchlistState == RequestState.Loading) {
+    return BlocBuilder<WatchlistMovieBloc, WatchlistMovieState>(
+      builder: (context, state) {
+        if (state.state == RequestState.Loading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (data.watchlistState == RequestState.Loaded) {
-          if (data.watchlistMovies.isEmpty) {
+        } else if (state.state == RequestState.Loaded) {
+          if (state.movies.isEmpty) {
             return const Center(child: Text('No watchlist movies'));
           }
           return ListView.builder(
+            itemCount: state.movies.length,
             itemBuilder: (context, index) {
-              final movie = data.watchlistMovies[index];
+              final movie = state.movies[index];
               return MovieCard(movie);
             },
-            itemCount: data.watchlistMovies.length,
           );
         } else {
-          return Center(child: Text(data.message));
+          return Center(child: Text(state.message));
         }
       },
     );
   }
 
+  /// Untuk watchlist TV, sesuai dengan definisi WatchlistTvState,
+  /// daftar TV disimpan di properti `tvs`
   Widget _buildTvWatchlist() {
-    return Consumer<WatchlistTvNotifier>(
-      builder: (context, data, child) {
-        if (data.watchlistState == RequestState.Loading) {
+    return BlocBuilder<WatchlistTvBloc, WatchlistTvState>(
+      builder: (context, state) {
+        if (state.state == RequestState.Loading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (data.watchlistState == RequestState.Loaded) {
-          if (data.watchlistTvs.isEmpty) {
+        } else if (state.state == RequestState.Loaded) {
+          if (state.tvs.isEmpty) {
             return const Center(child: Text('No watchlist TV series'));
           }
           return ListView.builder(
-            itemCount: data.watchlistTvs.length,
+            itemCount: state.tvs.length,
             itemBuilder: (context, index) {
-              final tv = data.watchlistTvs[index];
+              final tv = state.tvs[index];
               return TvCard(tv);
             },
           );
         } else {
-          return Center(child: Text(data.message));
+          return Center(child: Text(state.message));
         }
       },
     );

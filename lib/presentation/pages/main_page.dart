@@ -1,6 +1,6 @@
+import 'package:movie/presentation/pages/movie_page.dart';
+import 'package:tv/presentation/pages/tv_page.dart';
 import 'package:flutter/material.dart';
-import 'package:ditonton/presentation/pages/movie_page.dart';
-import 'package:ditonton/presentation/pages/tv_page.dart';
 import 'package:ditonton/presentation/pages/watchlist_page.dart';
 import 'package:ditonton/presentation/pages/about_page.dart';
 
