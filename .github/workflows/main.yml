@@ -1,0 +1,106 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Checkout source code
+      - uses: actions/checkout@v3
+
+      # 2) Install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 3) Install lcov (untuk merge coverage)
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      # 4) Get dependencies di root
+      - name: Pub get (root)
+        if: exists('pubspec.yaml')
+        run: flutter pub get
+
+      # 5) Get dependencies di folder movie
+      - name: Pub get (movie)
+        run: |
+          cd movie
+          flutter pub get
+          cd ..
+
+      # 6) Get dependencies di folder tv
+      - name: Pub get (tv)
+        run: |
+          cd tv
+          flutter pub get
+          cd ..
+
+      # 7) Get dependencies di folder core
+      - name: Pub get (core)
+        run: |
+          cd core
+          flutter pub get
+          cd ..
+
+      # 8) Jalankan test coverage di folder movie
+      - name: Run tests in movie
+        run: |
+          cd movie
+          flutter test --coverage
+          cd ..
+
+      # 9) Jalankan test coverage di folder tv
+      - name: Run tests in tv
+        run: |
+          cd tv
+          flutter test --coverage
+          cd ..
+
+      # 10) Jalankan test coverage di folder core
+      - name: Run tests in core
+        run: |
+          cd core
+          flutter test --coverage
+          cd ..
+
+      # 10) Merge coverage dari ketiga modul
+      - name: Merge coverage
+        run: |
+          mkdir coverage_merged
+
+          # Salin file lcov.info dari setiap modul ke folder coverage_merged
+          # Movie
+          if [ -f movie/coverage/lcov.info ]; then cp movie/coverage/lcov.info coverage_merged/movie.info; fi
+          
+          # TV
+          if [ -f tv/coverage/lcov.info ]; then cp tv/coverage/lcov.info coverage_merged/tv.info; fi
+          
+          # Core
+          if [ -f core/coverage/lcov.info ]; then cp core/coverage/lcov.info coverage_merged/core.info; fi
+
+          # Buat file lcov_merged.info
+          # Inisialisasi file coverage gabungan
+          if [ -f coverage_merged/movie.info ]; then
+            cp coverage_merged/movie.info coverage_merged/lcov_merged.info
+          else
+            echo "" > coverage_merged/lcov_merged.info
+          fi
+
+          # Tambahkan tv.info jika ada
+          if [ -f coverage_merged/tv.info ]; then
+            lcov --add-tracefile coverage_merged/tv.info --output-file coverage_merged/lcov_merged.info
+          fi
+
+          # Tambahkan core.info jika ada
+          if [ -f coverage_merged/core.info ]; then
+            lcov --add-tracefile coverage_merged/core.info --output-file coverage_merged/lcov_merged.info
+          fi
+
+          # Sekarang file coverage_merged/lcov_merged.info adalah gabungan coverage
