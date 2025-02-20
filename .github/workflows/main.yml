@@ -25,8 +25,10 @@ jobs:
 
       # 4) Get dependencies di root
       - name: Pub get (root)
-        if: exists('pubspec.yaml')
-        run: flutter pub get
+        run: |
+          if [ -f pubspec.yaml ]; then
+            flutter pub get
+          fi
 
       # 5) Get dependencies di folder movie
       - name: Pub get (movie)
