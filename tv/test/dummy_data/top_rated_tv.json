@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "id": 3,
+      "name": "Mock Top Rated TV",
+      "overview": "Overview top rated",
+      "poster_path": "/path_top.jpg",
+      "vote_average": 9.0,
+      "first_air_date": "2021-05-05"
+    }
+  ]
+}

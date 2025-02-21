@@ -20,28 +20,33 @@ class TvListBloc extends Bloc<TvListEvent, TvListState> {
   }
 
   Future<void> _onFetchTvList(
-      FetchTvList event, Emitter<TvListState> emit) async {
+    FetchTvList event,
+    Emitter<TvListState> emit,
+  ) async {
     // Set semua kategori ke Loading
-    emit(state.copyWith(
-      onAirState: RequestState.Loading,
-      popularState: RequestState.Loading,
-      topRatedState: RequestState.Loading,
-    ));
+    emit(
+      state.copyWith(
+        onAirState: RequestState.Loading,
+        popularState: RequestState.Loading,
+        topRatedState: RequestState.Loading,
+      ),
+    );
 
     // On Air TVs
     final onAirResult = await getOnAirTvs.execute();
     onAirResult.fold(
       (failure) {
-        emit(state.copyWith(
-          onAirState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            onAirState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (onAirTvs) {
-        emit(state.copyWith(
-          onAirState: RequestState.Loaded,
-          onAirTvs: onAirTvs,
-        ));
+        emit(
+          state.copyWith(onAirState: RequestState.Loaded, onAirTvs: onAirTvs),
+        );
       },
     );
 
@@ -49,16 +54,20 @@ class TvListBloc extends Bloc<TvListEvent, TvListState> {
     final popularResult = await getPopularTvs.execute();
     popularResult.fold(
       (failure) {
-        emit(state.copyWith(
-          popularState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            popularState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (popularTvs) {
-        emit(state.copyWith(
-          popularState: RequestState.Loaded,
-          popularTvs: popularTvs,
-        ));
+        emit(
+          state.copyWith(
+            popularState: RequestState.Loaded,
+            popularTvs: popularTvs,
+          ),
+        );
       },
     );
 
@@ -66,16 +75,20 @@ class TvListBloc extends Bloc<TvListEvent, TvListState> {
     final topRatedResult = await getTopRatedTvs.execute();
     topRatedResult.fold(
       (failure) {
-        emit(state.copyWith(
-          topRatedState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            topRatedState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (topRatedTvs) {
-        emit(state.copyWith(
-          topRatedState: RequestState.Loaded,
-          topRatedTvs: topRatedTvs,
-        ));
+        emit(
+          state.copyWith(
+            topRatedState: RequestState.Loaded,
+            topRatedTvs: topRatedTvs,
+          ),
+        );
       },
     );
   }

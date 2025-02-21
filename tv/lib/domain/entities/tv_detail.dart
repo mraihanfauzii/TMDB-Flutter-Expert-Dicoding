@@ -26,14 +26,40 @@ class TvDetail extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        posterPath,
-        overview,
-        voteAverage,
-        genres,
-        numberOfEpisodes,
-        numberOfSeasons,
-        seasons
-      ];
+    id,
+    name,
+    posterPath,
+    overview,
+    voteAverage,
+    genres,
+    numberOfEpisodes,
+    numberOfSeasons,
+    seasons,
+  ];
+}
+
+extension on TvDetail {
+  TvDetail copyWith({
+    int? id,
+    String? name,
+    String? posterPath,
+    String? overview,
+    double? voteAverage,
+    List<String>? genres,
+    int? numberOfEpisodes,
+    int? numberOfSeasons,
+    List<Season>? seasons,
+  }) {
+    return TvDetail(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      posterPath: posterPath ?? this.posterPath,
+      overview: overview ?? this.overview,
+      voteAverage: voteAverage ?? this.voteAverage,
+      genres: genres ?? this.genres,
+      numberOfEpisodes: numberOfEpisodes ?? this.numberOfEpisodes,
+      numberOfSeasons: numberOfSeasons ?? this.numberOfSeasons,
+      seasons: seasons ?? this.seasons,
+    );
+  }
 }

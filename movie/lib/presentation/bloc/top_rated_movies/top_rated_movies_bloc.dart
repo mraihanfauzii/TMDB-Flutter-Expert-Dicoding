@@ -9,26 +9,24 @@ class TopRatedMoviesBloc
   final GetTopRatedMovies getTopRatedMovies;
 
   TopRatedMoviesBloc({required this.getTopRatedMovies})
-      : super(const TopRatedMoviesState()) {
+    : super(const TopRatedMoviesState()) {
     on<FetchTopRatedMovies>(_onFetchTopRatedMovies);
   }
 
   Future<void> _onFetchTopRatedMovies(
-      FetchTopRatedMovies event, Emitter<TopRatedMoviesState> emit) async {
+    FetchTopRatedMovies event,
+    Emitter<TopRatedMoviesState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getTopRatedMovies.execute();
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          state: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(state: RequestState.Error, message: failure.message),
+        );
       },
       (moviesData) {
-        emit(state.copyWith(
-          state: RequestState.Loaded,
-          movies: moviesData,
-        ));
+        emit(state.copyWith(state: RequestState.Loaded, movies: moviesData));
       },
     );
   }

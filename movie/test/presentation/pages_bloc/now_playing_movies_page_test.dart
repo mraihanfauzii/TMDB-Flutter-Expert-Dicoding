@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,13 +7,11 @@ import 'package:movie/presentation/bloc/now_playing_movies/now_playing_movies_bl
 import 'package:movie/presentation/bloc/now_playing_movies/now_playing_movies_state.dart';
 import 'package:movie/presentation/pages/now_playing_movies_page.dart';
 import 'package:core/utils/state_enum.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:bloc_test/bloc_test.dart';
+import 'package:mocktail/mocktail.dart';
 
-import 'now_playing_movies_page_test.mocks.dart';
+// Buat mock bloc dengan mocktail
+class MockNowPlayingMoviesBloc extends Mock implements NowPlayingMoviesBloc {}
 
-@GenerateMocks([NowPlayingMoviesBloc])
 void main() {
   late MockNowPlayingMoviesBloc mockBloc;
 
@@ -46,8 +45,8 @@ void main() {
 
   testWidgets('should display CircularProgressIndicator when loading', (tester) async {
     final testState = NowPlayingMoviesState(state: RequestState.Loading, movies: [], message: '');
-    when(mockBloc.state).thenReturn(testState);
-    whenListen(
+    when(() => mockBloc.state).thenReturn(testState);
+    whenListen<NowPlayingMoviesState>(
       mockBloc,
       Stream<NowPlayingMoviesState>.fromIterable([testState]),
       initialState: testState,
@@ -58,8 +57,8 @@ void main() {
 
   testWidgets('should display ListView when data is loaded', (tester) async {
     final testState = NowPlayingMoviesState(state: RequestState.Loaded, movies: tMovies, message: '');
-    when(mockBloc.state).thenReturn(testState);
-    whenListen(
+    when(() => mockBloc.state).thenReturn(testState);
+    whenListen<NowPlayingMoviesState>(
       mockBloc,
       Stream<NowPlayingMoviesState>.fromIterable([testState]),
       initialState: testState,

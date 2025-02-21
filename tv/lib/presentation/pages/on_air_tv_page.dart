@@ -25,9 +25,7 @@ class _OnAirTvPageState extends State<OnAirTvPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('On Air TV Series'),
-      ),
+      appBar: AppBar(title: const Text('On Air TV Series')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<OnAirTvBloc, OnAirTvState>(

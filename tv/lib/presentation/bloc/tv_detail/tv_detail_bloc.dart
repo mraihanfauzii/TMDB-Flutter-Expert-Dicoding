@@ -29,28 +29,37 @@ class TvDetailBloc extends Bloc<TvDetailEvent, TvDetailState> {
   }
 
   Future<void> _onFetchTvDetail(
-      FetchTvDetail event, Emitter<TvDetailState> emit) async {
+    FetchTvDetail event,
+    Emitter<TvDetailState> emit,
+  ) async {
     emit(state.copyWith(tvState: RequestState.Loading));
     final detailResult = await getTvDetail.execute(event.id);
     final recommendationResult = await getTvRecommendations.execute(event.id);
 
     detailResult.fold(
       (failure) {
-        emit(state.copyWith(
-            tvState: RequestState.Error, message: failure.message));
+        emit(
+          state.copyWith(tvState: RequestState.Error, message: failure.message),
+        );
       },
       (tv) async {
         emit(state.copyWith(tvDetail: tv, tvState: RequestState.Loaded));
         recommendationResult.fold(
           (failure) {
-            emit(state.copyWith(
+            emit(
+              state.copyWith(
                 recommendationState: RequestState.Error,
-                message: failure.message));
+                message: failure.message,
+              ),
+            );
           },
           (tvs) {
-            emit(state.copyWith(
+            emit(
+              state.copyWith(
                 recommendationState: RequestState.Loaded,
-                recommendations: tvs));
+                recommendations: tvs,
+              ),
+            );
           },
         );
       },
@@ -58,7 +67,9 @@ class TvDetailBloc extends Bloc<TvDetailEvent, TvDetailState> {
   }
 
   Future<void> _onAddWatchlistTv(
-      AddWatchlistTv event, Emitter<TvDetailState> emit) async {
+    AddWatchlistTv event,
+    Emitter<TvDetailState> emit,
+  ) async {
     final result = await saveWatchlistTv.execute(event.tv);
     result.fold(
       (failure) {
@@ -72,7 +83,9 @@ class TvDetailBloc extends Bloc<TvDetailEvent, TvDetailState> {
   }
 
   Future<void> _onRemoveWatchlistTv(
-      RemoveWatchlistTvEvent event, Emitter<TvDetailState> emit) async {
+    RemoveWatchlistTvEvent event,
+    Emitter<TvDetailState> emit,
+  ) async {
     final result = await removeWatchlistTv.execute(event.tv);
     result.fold(
       (failure) {
@@ -86,7 +99,9 @@ class TvDetailBloc extends Bloc<TvDetailEvent, TvDetailState> {
   }
 
   Future<void> _onLoadWatchlistTvStatus(
-      LoadWatchlistTvStatus event, Emitter<TvDetailState> emit) async {
+    LoadWatchlistTvStatus event,
+    Emitter<TvDetailState> emit,
+  ) async {
     final result = await getWatchListTvStatus.execute(event.id);
     emit(state.copyWith(isAddedToWatchlist: result));
   }

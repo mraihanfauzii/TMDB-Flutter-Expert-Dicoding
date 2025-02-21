@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "675813073647",
+    "project_id": "tmdbappflutter",
+    "storage_bucket": "tmdbappflutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675813073647:android:ccecfc14349b537ff7f11a",
+        "android_client_info": {
+          "package_name": "com.dicoding.ditonton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCozQ5V1j8ezdOgCVm81D79SzsDK-GumVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

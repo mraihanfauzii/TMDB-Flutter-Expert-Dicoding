@@ -1,55 +1,66 @@
 import 'dart:convert';
 
 import 'package:core/utils/exception.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:tv/data/datasources/tv_remote_data_source.dart';
 import 'package:tv/data/models/season_detail_response.dart';
 import 'package:tv/data/models/tv_detail_model.dart';
 import 'package:tv/data/models/tv_model.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
+import 'package:tv/data/models/tv_response.dart';
 
-import '../../helpers/test_helper.mocks.dart';
+import '../../helpers/json_reader.dart';
+import 'tv_remote_data_source_test.mocks.dart';
 
+@GenerateMocks([Dio])
 void main() {
+  const apiKey = 'api_key=2174d146bb9c0eab47529b2e77d6b526';
+  const baseUrl = 'https://api.themoviedb.org/3';
+
   late TvRemoteDataSourceImpl dataSource;
-  late MockHttpClient mockHttpClient;
+  late MockDio mockDio;
 
   setUp(() {
-    mockHttpClient = MockHttpClient();
-    dataSource = TvRemoteDataSourceImpl(client: mockHttpClient);
+    mockDio = MockDio();
+    dataSource = TvRemoteDataSourceImpl(dio: mockDio);
   });
 
   group('getOnAirTvs', () {
-    test('should return list of TvModel when the response code is 200', () async {
+    final tTvList = TvResponse.fromJson(
+      json.decode(readJson('dummy_data/on_air_tv.json')),
+    ).tvList;
+
+    test('should return list of TvModel when statusCode = 200', () async {
       // arrange
-      when(
-        mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/on_the_air?api_key=2174d146bb9c0eab47529b2e77d6b526')),
-      ).thenAnswer((_) async => http.Response(
-        jsonEncode({
-          "results": [
-            {
-              "id": 1,
-              "name": "Mock On Air TV",
-              "overview": "Overview...",
-              "poster_path": "/path.jpg",
-              "vote_average": 7.8,
-              "first_air_date": "2023-01-01"
-            }
-          ]
-        }),
-        200,
-      ));
+      when(mockDio.get('$baseUrl/tv/on_the_air?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/on_the_air?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/on_air_tv.json')),
+        ),
+      );
       // act
       final result = await dataSource.getOnAirTvs();
       // assert
       expect(result, isA<List<TvModel>>());
-      expect(result.length, 1);
+      expect(result, tTvList);
     });
 
-    test('should throw a ServerException when the response code is not 200', () async {
+    test('should throw a ServerException when statusCode != 200', () async {
       // arrange
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Not Found', 404));
+      when(mockDio.get('$baseUrl/tv/on_the_air?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/on_the_air?$apiKey',
+          ),
+          statusCode: 404,
+          data: 'Not Found',
+        ),
+      );
       // act
       final call = dataSource.getOnAirTvs();
       // assert
@@ -58,35 +69,38 @@ void main() {
   });
 
   group('getPopularTvs', () {
-    test('should return list of TvModel when response is 200', () async {
+    final tTvList = TvResponse.fromJson(
+      json.decode(readJson('dummy_data/popular_tv.json')),
+    ).tvList;
+
+    test('should return list of TvModel when statusCode = 200', () async {
       // arrange
-      when(mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/popular?api_key=2174d146bb9c0eab47529b2e77d6b526')))
-          .thenAnswer(
-            (_) async => http.Response(
-          jsonEncode({
-            "results": [
-              {
-                "id": 2,
-                "name": "Mock Popular TV",
-                "overview": "Overview popular",
-                "poster_path": "/path_pop.jpg",
-                "vote_average": 7.5,
-                "first_air_date": "2022-11-11"
-              }
-            ]
-          }),
-          200,
+      when(mockDio.get('$baseUrl/tv/popular?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/popular?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/popular_tv.json')),
         ),
       );
       // act
       final result = await dataSource.getPopularTvs();
       // assert
-      expect(result.length, 1);
+      expect(result, tTvList);
     });
 
-    test('should throw ServerException if error', () async {
+    test('should throw ServerException when statusCode != 200', () async {
       // arrange
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 500));
+      when(mockDio.get('$baseUrl/tv/popular?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/popular?$apiKey',
+          ),
+          statusCode: 500,
+          data: 'Error',
+        ),
+      );
       // act
       final call = dataSource.getPopularTvs();
       // assert
@@ -95,72 +109,79 @@ void main() {
   });
 
   group('getTopRatedTvs', () {
-    test('should return list of TvModel if success', () async {
+    final tTvList = TvResponse.fromJson(
+      json.decode(readJson('dummy_data/top_rated_tv.json')),
+    ).tvList;
+
+    test('should return list of TvModel when statusCode = 200', () async {
       // arrange
-      when(mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/top_rated?api_key=2174d146bb9c0eab47529b2e77d6b526')))
-          .thenAnswer(
-            (_) async => http.Response(
-          jsonEncode({
-            "results": [
-              {
-                "id": 3,
-                "name": "Mock Top Rated TV",
-                "overview": "Overview top rated",
-                "poster_path": "/path_top.jpg",
-                "vote_average": 9.0,
-                "first_air_date": "2021-05-05"
-              }
-            ]
-          }),
-          200,
+      when(mockDio.get('$baseUrl/tv/top_rated?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/top_rated?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/top_rated_tv.json')),
         ),
       );
       // act
       final result = await dataSource.getTopRatedTvs();
       // assert
-      expect(result.length, 1);
+      expect(result, tTvList);
     });
 
-    test('should throw ServerException if fail', () async {
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 404));
+    test('should throw ServerException when statusCode != 200', () async {
+      // arrange
+      when(mockDio.get('$baseUrl/tv/top_rated?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/top_rated?$apiKey',
+          ),
+          statusCode: 404,
+          data: 'Not Found',
+        ),
+      );
+      // act
       final call = dataSource.getTopRatedTvs();
+      // assert
       expect(() => call, throwsA(isA<ServerException>()));
     });
   });
 
   group('getTvDetail', () {
     const tId = 1;
-    test('should return TvDetailResponse when the response code is 200', () async {
+    final tTvDetail = TvDetailResponse.fromJson(
+      json.decode(readJson('dummy_data/tv_detail.json')),
+    );
+
+    test('should return TvDetailResponse when statusCode = 200', () async {
       // arrange
-      when(
-        mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/$tId?api_key=2174d146bb9c0eab47529b2e77d6b526')),
-      ).thenAnswer(
-            (_) async => http.Response(
-          jsonEncode({
-            "id": 1,
-            "name": "Mock Tv",
-            "overview": "Overview",
-            "poster_path": "/path.jpg",
-            "vote_average": 8.0,
-            "genres": [
-              {"id": 18, "name": "Drama"}
-            ],
-            "number_of_episodes": 10,
-            "number_of_seasons": 1
-          }),
-          200,
+      when(mockDio.get('$baseUrl/tv/$tId?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tId?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/tv_detail.json')),
         ),
       );
       // act
       final result = await dataSource.getTvDetail(tId);
       // assert
-      expect(result, isA<TvDetailResponse>());
-      expect(result.id, tId);
+      expect(result, tTvDetail);
     });
 
-    test('should throw ServerException when code != 200', () async {
+    test('should throw ServerException when statusCode != 200', () async {
       // arrange
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 500));
+      when(mockDio.get('$baseUrl/tv/$tId?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tId?$apiKey',
+          ),
+          statusCode: 500,
+          data: 'Error',
+        ),
+      );
       // act
       final call = dataSource.getTvDetail(tId);
       // assert
@@ -169,103 +190,126 @@ void main() {
   });
 
   group('getTvRecommendations', () {
+    final tTvList = TvResponse.fromJson(
+      json.decode(readJson('dummy_data/tv_recommendations.json')),
+    ).tvList;
     const tId = 1;
-    test('should return list of TvModel if success', () async {
-      when(mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/$tId/recommendations?api_key=2174d146bb9c0eab47529b2e77d6b526')))
-          .thenAnswer((_) async => http.Response(
-        jsonEncode({
-          "results": [
-            {
-              "id": 99,
-              "name": "Mock Recommendation",
-              "overview": "Overview rec",
-              "poster_path": "/path_rec.jpg",
-              "vote_average": 6.7
-            }
-          ]
-        }),
-        200,
-      ));
+
+    test('should return list of TvModel if success (200)', () async {
+      // arrange
+      when(mockDio.get('$baseUrl/tv/$tId/recommendations?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tId/recommendations?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/tv_recommendations.json')),
+        ),
+      );
+      // act
       final result = await dataSource.getTvRecommendations(tId);
-      expect(result.length, 1);
+      // assert
+      expect(result, tTvList);
     });
 
-    test('should throw ServerException if fail', () async {
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 404));
+    test('should throw ServerException when statusCode != 200', () async {
+      // arrange
+      when(mockDio.get('$baseUrl/tv/$tId/recommendations?$apiKey')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tId/recommendations?$apiKey',
+          ),
+          statusCode: 404,
+          data: 'Not Found',
+        ),
+      );
+      // act
       final call = dataSource.getTvRecommendations(tId);
+      // assert
       expect(() => call, throwsA(isA<ServerException>()));
     });
   });
 
   group('searchTvs', () {
+    final tTvList = TvResponse.fromJson(
+      json.decode(readJson('dummy_data/search_kraven_tv.json')),
+    ).tvList;
     const tQuery = 'kraven';
-    test('should return list of TvModel if success', () async {
-      when(mockHttpClient.get(Uri.parse(
-          'https://api.themoviedb.org/3/search/tv?api_key=2174d146bb9c0eab47529b2e77d6b526&query=$tQuery')))
-          .thenAnswer(
-            (_) async => http.Response(
-          jsonEncode({
-            "results": [
-              {
-                "id": 101,
-                "name": "Kraven Series",
-                "overview": "Overview search",
-                "poster_path": "/path_kraven.jpg",
-                "vote_average": 5.5
-              }
-            ]
-          }),
-          200,
+
+    test('should return list of TvModel if success (200)', () async {
+      // arrange
+      when(mockDio.get('$baseUrl/search/tv?$apiKey&query=$tQuery')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/search/tv?$apiKey&query=$tQuery',
+          ),
+          statusCode: 200,
+          data: json.decode(
+            readJson('dummy_data/search_kraven_tv.json'),
+          ),
         ),
       );
-
+      // act
       final result = await dataSource.searchTvs(tQuery);
-      expect(result.length, 1);
+      // assert
+      expect(result, tTvList);
     });
 
-    test('should throw ServerException if error', () async {
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 500));
+    test('should throw ServerException when statusCode != 200', () async {
+      // arrange
+      when(mockDio.get('$baseUrl/search/tv?$apiKey&query=$tQuery')).thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/search/tv?$apiKey&query=$tQuery',
+          ),
+          statusCode: 500,
+          data: 'Error',
+        ),
+      );
+      // act
       final call = dataSource.searchTvs(tQuery);
+      // assert
       expect(() => call, throwsA(isA<ServerException>()));
     });
   });
 
-  // Tambahan group test => getSeasonDetail
   group('getSeasonDetail', () {
     const tvId = 777;
     const seasonNum = 2;
-    test('should return SeasonDetailResponse if success', () async {
+    final tSeasonDetail = SeasonDetailResponse.fromJson(
+      json.decode(readJson('dummy_data/season_detail.json')),
+    );
+
+    test('should return SeasonDetailResponse if success (200)', () async {
       // arrange
-      when(
-        mockHttpClient.get(Uri.parse('https://api.themoviedb.org/3/tv/$tvId/season/$seasonNum?api_key=2174d146bb9c0eab47529b2e77d6b526')),
-      ).thenAnswer(
-            (_) async => http.Response(
-          jsonEncode({
-            "id": 555,
-            "name": "Season 2",
-            "episodes": [
-              {
-                "id": 9999,
-                "name": "Episode 1",
-                "episode_number": 1,
-                "vote_average": 8.1
-              },
-            ],
-          }),
-          200,
+      when(mockDio.get('$baseUrl/tv/$tvId/season/$seasonNum?$apiKey'))
+          .thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tvId/season/$seasonNum?$apiKey',
+          ),
+          statusCode: 200,
+          data: json.decode(readJson('dummy_data/season_detail.json')),
         ),
       );
       // act
       final result = await dataSource.getSeasonDetail(tvId, seasonNum);
       // assert
-      expect(result, isA<SeasonDetailResponse>());
-      expect(result.id, 555);
-      expect(result.episodes.length, 1);
+      expect(result, tSeasonDetail);
     });
 
-    test('should throw ServerException if fail', () async {
+    test('should throw ServerException when statusCode != 200', () async {
       // arrange
-      when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response('Error', 404));
+      when(mockDio.get('$baseUrl/tv/$tvId/season/$seasonNum?$apiKey'))
+          .thenAnswer(
+            (_) async => Response(
+          requestOptions: RequestOptions(
+            path: '$baseUrl/tv/$tvId/season/$seasonNum?$apiKey',
+          ),
+          statusCode: 404,
+          data: 'Error',
+        ),
+      );
       // act
       final call = dataSource.getSeasonDetail(tvId, seasonNum);
       // assert

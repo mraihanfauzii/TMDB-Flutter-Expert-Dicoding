@@ -57,18 +57,12 @@ class _WatchlistPageState extends State<WatchlistPage>
         title: const Text('Watchlist'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Movies'),
-            Tab(text: 'TV Series'),
-          ],
+          tabs: const [Tab(text: 'Movies'), Tab(text: 'TV Series')],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildMoviesWatchlist(),
-          _buildTvWatchlist(),
-        ],
+        children: [_buildMoviesWatchlist(), _buildTvWatchlist()],
       ),
     );
   }

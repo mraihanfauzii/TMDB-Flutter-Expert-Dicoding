@@ -25,9 +25,7 @@ class _NowPlayingMoviesPageState extends State<NowPlayingMoviesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Now Playing Movies'),
-      ),
+      appBar: AppBar(title: const Text('Now Playing Movies')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<NowPlayingMoviesBloc, NowPlayingMoviesState>(
@@ -43,9 +41,7 @@ class _NowPlayingMoviesPageState extends State<NowPlayingMoviesPage> {
                 },
               );
             } else {
-              return Center(
-                child: Text(state.message),
-              );
+              return Center(child: Text(state.message));
             }
           },
         ),

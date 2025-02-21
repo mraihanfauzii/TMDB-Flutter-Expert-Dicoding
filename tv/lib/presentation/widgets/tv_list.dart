@@ -31,12 +31,13 @@ class TvList extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(16)),
                 child: CachedNetworkImage(
-                  imageUrl: tv.posterPath != null
-                      ? '$BASE_IMAGE_URL${tv.posterPath}'
-                      : 'https://via.placeholder.com/200',
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  imageUrl:
+                      tv.posterPath != null
+                          ? '$BASE_IMAGE_URL${tv.posterPath}'
+                          : 'https://via.placeholder.com/200',
+                  placeholder:
+                      (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),

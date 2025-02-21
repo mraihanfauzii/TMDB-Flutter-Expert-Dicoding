@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "id": 1,
+      "name": "Mock On Air TV",
+      "overview": "Overview...",
+      "poster_path": "/path.jpg",
+      "vote_average": 7.8,
+      "first_air_date": "2023-01-01"
+    }
+  ]
+}

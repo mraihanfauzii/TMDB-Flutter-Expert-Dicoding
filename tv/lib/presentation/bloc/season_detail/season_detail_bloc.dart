@@ -8,18 +8,23 @@ class SeasonDetailBloc extends Bloc<SeasonDetailEvent, SeasonDetailState> {
   final TvRemoteDataSource remoteDataSource;
 
   SeasonDetailBloc({required this.remoteDataSource})
-      : super(const SeasonDetailState()) {
+    : super(const SeasonDetailState()) {
     on<FetchSeasonDetail>(_onFetchSeasonDetail);
   }
 
   Future<void> _onFetchSeasonDetail(
-      FetchSeasonDetail event, Emitter<SeasonDetailState> emit) async {
+    FetchSeasonDetail event,
+    Emitter<SeasonDetailState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     try {
       final response = await remoteDataSource.getSeasonDetail(
-          event.tvId, event.seasonNumber);
-      emit(state.copyWith(
-          state: RequestState.Loaded, episodes: response.episodes));
+        event.tvId,
+        event.seasonNumber,
+      );
+      emit(
+        state.copyWith(state: RequestState.Loaded, episodes: response.episodes),
+      );
     } catch (e) {
       emit(state.copyWith(state: RequestState.Error, message: e.toString()));
     }

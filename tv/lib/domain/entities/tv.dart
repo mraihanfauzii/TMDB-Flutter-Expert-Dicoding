@@ -19,11 +19,11 @@ class Tv extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        overview,
-        posterPath,
-        voteAverage,
-        firstAirDate,
-      ];
+    id,
+    name,
+    overview,
+    posterPath,
+    voteAverage,
+    firstAirDate,
+  ];
 }

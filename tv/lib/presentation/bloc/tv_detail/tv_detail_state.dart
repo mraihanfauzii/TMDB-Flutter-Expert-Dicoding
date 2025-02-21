@@ -44,12 +44,12 @@ class TvDetailState extends Equatable {
 
   @override
   List<Object?> get props => [
-        tvState,
-        tvDetail,
-        message,
-        recommendationState,
-        recommendations,
-        isAddedToWatchlist,
-        watchlistMessage,
-      ];
+    tvState,
+    tvDetail,
+    message,
+    recommendationState,
+    recommendations,
+    isAddedToWatchlist,
+    watchlistMessage,
+  ];
 }

@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "id": 2,
+      "name": "Mock Popular TV",
+      "overview": "Overview popular",
+      "poster_path": "/path_pop.jpg",
+      "vote_average": 7.5,
+      "first_air_date": "2022-11-11"
+    }
+  ]
+}

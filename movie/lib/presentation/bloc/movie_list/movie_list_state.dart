@@ -43,12 +43,12 @@ class MovieListState extends Equatable {
 
   @override
   List<Object> get props => [
-        nowPlayingMovies,
-        nowPlayingState,
-        popularMovies,
-        popularState,
-        topRatedMovies,
-        topRatedState,
-        message,
-      ];
+    nowPlayingMovies,
+    nowPlayingState,
+    popularMovies,
+    popularState,
+    topRatedMovies,
+    topRatedState,
+    message,
+  ];
 }

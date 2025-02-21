@@ -1,6 +1,7 @@
-import 'package:ditonton/injection.dart' as di;
 import 'package:ditonton/presentation/pages/about_page.dart';
 import 'package:ditonton/presentation/pages/main_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,10 +33,19 @@ import 'package:tv/presentation/pages/tv_detail_page.dart';
 import 'package:tv/presentation/pages/season_detail_page.dart';
 import 'package:core/utils/constants.dart';
 import 'package:core/utils/utils.dart';
+import 'package:core/injection.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  di.init();
+  await Firebase.initializeApp();
+
+  // Konfigurasi Crashlytics: Kirim error yang tidak tertangani ke Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  //Set debug mode Crashlytics
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+  await di.init();
+
   runApp(const MyApp());
 }
 
@@ -47,27 +57,29 @@ class MyApp extends StatelessWidget {
       providers: [
         // Bloc untuk Movie
         BlocProvider<MovieListBloc>(
-          create: (_) => MovieListBloc(
-            getNowPlayingMovies: di.locator(),
-            getPopularMovies: di.locator(),
-            getTopRatedMovies: di.locator(),
-          ),
+          create:
+              (_) => MovieListBloc(
+                getNowPlayingMovies: di.locator(),
+                getPopularMovies: di.locator(),
+                getTopRatedMovies: di.locator(),
+              ),
         ),
         BlocProvider<MovieDetailBloc>(
-          create: (_) => MovieDetailBloc(
-            getMovieDetail: di.locator(),
-            getMovieRecommendations: di.locator(),
-            getWatchListStatus: di.locator(),
-            saveWatchlist: di.locator(),
-            removeWatchlist: di.locator(),
-          ),
+          create:
+              (_) => MovieDetailBloc(
+                getMovieDetail: di.locator(),
+                getMovieRecommendations: di.locator(),
+                getWatchListStatus: di.locator(),
+                saveWatchlist: di.locator(),
+                removeWatchlist: di.locator(),
+              ),
         ),
         BlocProvider<MovieSearchBloc>(
           create: (_) => MovieSearchBloc(searchMovies: di.locator()),
         ),
         BlocProvider<NowPlayingMoviesBloc>(
-          create: (_) =>
-              NowPlayingMoviesBloc(getNowPlayingMovies: di.locator()),
+          create:
+              (_) => NowPlayingMoviesBloc(getNowPlayingMovies: di.locator()),
         ),
         BlocProvider<PopularMoviesBloc>(
           create: (_) => PopularMoviesBloc(getPopularMovies: di.locator()),
@@ -80,11 +92,12 @@ class MyApp extends StatelessWidget {
         ),
         // Bloc untuk TV
         BlocProvider<TvListBloc>(
-          create: (_) => TvListBloc(
-            getOnAirTvs: di.locator(),
-            getPopularTvs: di.locator(),
-            getTopRatedTvs: di.locator(),
-          ),
+          create:
+              (_) => TvListBloc(
+                getOnAirTvs: di.locator(),
+                getPopularTvs: di.locator(),
+                getTopRatedTvs: di.locator(),
+              ),
         ),
         BlocProvider<OnAirTvBloc>(
           create: (_) => OnAirTvBloc(getOnAirTvs: di.locator()),
@@ -96,13 +109,14 @@ class MyApp extends StatelessWidget {
           create: (_) => TopRatedTvBloc(getTopRatedTvs: di.locator()),
         ),
         BlocProvider<TvDetailBloc>(
-          create: (_) => TvDetailBloc(
-            getTvDetail: di.locator(),
-            getTvRecommendations: di.locator(),
-            getWatchListTvStatus: di.locator(),
-            saveWatchlistTv: di.locator(),
-            removeWatchlistTv: di.locator(),
-          ),
+          create:
+              (_) => TvDetailBloc(
+                getTvDetail: di.locator(),
+                getTvRecommendations: di.locator(),
+                getWatchListTvStatus: di.locator(),
+                saveWatchlistTv: di.locator(),
+                removeWatchlistTv: di.locator(),
+              ),
         ),
         BlocProvider<TvSearchBloc>(
           create: (_) => TvSearchBloc(searchTvs: di.locator()),
@@ -136,13 +150,16 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(builder: (_) => const MainPage());
             case NowPlayingMoviesPage.ROUTE_NAME:
               return MaterialPageRoute(
-                  builder: (_) => const NowPlayingMoviesPage());
+                builder: (_) => const NowPlayingMoviesPage(),
+              );
             case PopularMoviesPage.ROUTE_NAME:
               return CupertinoPageRoute(
-                  builder: (_) => const PopularMoviesPage());
+                builder: (_) => const PopularMoviesPage(),
+              );
             case TopRatedMoviesPage.ROUTE_NAME:
               return CupertinoPageRoute(
-                  builder: (_) => const TopRatedMoviesPage());
+                builder: (_) => const TopRatedMoviesPage(),
+              );
             case MovieDetailPage.ROUTE_NAME:
               final id = settings.arguments as int;
               return MaterialPageRoute(
@@ -164,8 +181,11 @@ class MyApp extends StatelessWidget {
             case SeasonDetailPage.ROUTE_NAME:
               final args = settings.arguments as SeasonDetailArgs;
               return MaterialPageRoute(
-                builder: (_) => SeasonDetailPage(
-                    tvId: args.tvId, seasonNumber: args.seasonNumber),
+                builder:
+                    (_) => SeasonDetailPage(
+                      tvId: args.tvId,
+                      seasonNumber: args.seasonNumber,
+                    ),
               );
             case SearchPage.ROUTE_NAME:
               return CupertinoPageRoute(builder: (_) => const SearchPage());
@@ -174,13 +194,13 @@ class MyApp extends StatelessWidget {
             case AboutPage.ROUTE_NAME:
               return MaterialPageRoute(builder: (_) => const AboutPage());
             default:
-              return MaterialPageRoute(builder: (_) {
-                return const Scaffold(
-                  body: Center(
-                    child: Text('Page not found :('),
-                  ),
-                );
-              });
+              return MaterialPageRoute(
+                builder: (_) {
+                  return const Scaffold(
+                    body: Center(child: Text('Page not found :(')),
+                  );
+                },
+              );
           }
         },
       ),

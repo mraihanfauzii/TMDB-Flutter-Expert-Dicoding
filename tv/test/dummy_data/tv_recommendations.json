@@ -1,0 +1,11 @@
+{
+  "results": [
+    {
+      "id": 99,
+      "name": "Mock Recommendation",
+      "overview": "Overview rec",
+      "poster_path": "/path_rec.jpg",
+      "vote_average": 6.7
+    }
+  ]
+}

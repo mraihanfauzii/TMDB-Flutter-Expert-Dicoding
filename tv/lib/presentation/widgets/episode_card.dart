@@ -15,9 +15,10 @@ class EpisodeCard extends StatelessWidget {
       child: Row(
         children: [
           CachedNetworkImage(
-            imageUrl: episode.stillPath != null
-                ? '$BASE_IMAGE_URL${episode.stillPath}'
-                : 'https://via.placeholder.com/150',
+            imageUrl:
+                episode.stillPath != null
+                    ? '$BASE_IMAGE_URL${episode.stillPath}'
+                    : 'https://via.placeholder.com/150',
             width: 120,
             height: 80,
             fit: BoxFit.cover,
@@ -37,8 +38,11 @@ class EpisodeCard extends StatelessWidget {
                 // Rating
                 Row(
                   children: [
-                    const Icon(Icons.star,
-                        size: 14, color: Colors.yellowAccent),
+                    const Icon(
+                      Icons.star,
+                      size: 14,
+                      color: Colors.yellowAccent,
+                    ),
                     const SizedBox(width: 4),
                     Text('${(episode.voteAverage * 10).toStringAsFixed(0)}% '),
                     const SizedBox(width: 8),
@@ -50,7 +54,9 @@ class EpisodeCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         textStyle: const TextStyle(fontSize: 12),
                       ),
                       child: const Text('Rate it!'),

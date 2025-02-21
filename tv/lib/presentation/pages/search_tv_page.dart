@@ -14,9 +14,7 @@ class SearchTvPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search TV Series'),
-      ),
+      appBar: AppBar(title: const Text('Search TV Series')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -46,7 +44,8 @@ class SearchTvPage extends StatelessWidget {
                         final tv = state.tvs[index];
                         return Container(
                           key: Key(
-                              'tvSearchResult$index'), // <--- Tambahkan key!
+                            'tvSearchResult$index',
+                          ), // <--- Tambahkan key!
                           margin: const EdgeInsets.symmetric(vertical: 4),
                           child: TvCard(tv),
                         );

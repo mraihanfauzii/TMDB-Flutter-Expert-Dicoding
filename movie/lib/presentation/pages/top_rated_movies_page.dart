@@ -25,17 +25,13 @@ class _TopRatedMoviesPageState extends State<TopRatedMoviesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Top Rated Movies'),
-      ),
+      appBar: AppBar(title: const Text('Top Rated Movies')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<TopRatedMoviesBloc, TopRatedMoviesState>(
           builder: (context, state) {
             if (state.state == RequestState.Loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             } else if (state.state == RequestState.Loaded) {
               return ListView.builder(
                 itemBuilder: (context, index) {

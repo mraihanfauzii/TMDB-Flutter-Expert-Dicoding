@@ -35,75 +35,84 @@ class _HomeTvPageState extends State<HomeTvPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SearchTvPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const SearchTvPage()),
               );
             },
             icon: const Icon(Icons.search),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildSubHeading(
-              title: 'On The Air',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const OnAirTvPage(),
-                ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSubHeading(
+                title: 'On The Air',
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OnAirTvPage(),
+                      ),
+                    ),
               ),
-            ),
-            BlocBuilder<TvListBloc, TvListState>(builder: (context, state) {
-              if (state.onAirState == RequestState.Loading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state.onAirState == RequestState.Loaded) {
-                return TvList(state.onAirTvs);
-              } else {
-                return const Text('Failed');
-              }
-            }),
-            _buildSubHeading(
-              title: 'Popular',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PopularTvPage(),
-                ),
+              BlocBuilder<TvListBloc, TvListState>(
+                builder: (context, state) {
+                  if (state.onAirState == RequestState.Loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state.onAirState == RequestState.Loaded) {
+                    return TvList(state.onAirTvs);
+                  } else {
+                    return const Text('Failed');
+                  }
+                },
               ),
-            ),
-            BlocBuilder<TvListBloc, TvListState>(builder: (context, state) {
-              if (state.popularState == RequestState.Loading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state.popularState == RequestState.Loaded) {
-                return TvList(state.popularTvs);
-              } else {
-                return const Text('Failed');
-              }
-            }),
-            _buildSubHeading(
-              title: 'Top Rated',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const TopRatedTvPage(),
-                ),
+              _buildSubHeading(
+                title: 'Popular',
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PopularTvPage(),
+                      ),
+                    ),
               ),
-            ),
-            BlocBuilder<TvListBloc, TvListState>(builder: (context, state) {
-              if (state.topRatedState == RequestState.Loading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state.topRatedState == RequestState.Loaded) {
-                return TvList(state.topRatedTvs);
-              } else {
-                return const Text('Failed');
-              }
-            }),
-          ]),
+              BlocBuilder<TvListBloc, TvListState>(
+                builder: (context, state) {
+                  if (state.popularState == RequestState.Loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state.popularState == RequestState.Loaded) {
+                    return TvList(state.popularTvs);
+                  } else {
+                    return const Text('Failed');
+                  }
+                },
+              ),
+              _buildSubHeading(
+                title: 'Top Rated',
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TopRatedTvPage(),
+                      ),
+                    ),
+              ),
+              BlocBuilder<TvListBloc, TvListState>(
+                builder: (context, state) {
+                  if (state.topRatedState == RequestState.Loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state.topRatedState == RequestState.Loaded) {
+                    return TvList(state.topRatedTvs);
+                  } else {
+                    return const Text('Failed');
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -118,10 +127,9 @@ class _HomeTvPageState extends State<HomeTvPage> {
           onTap: onTap,
           child: const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Row(children: [
-              Text('See More'),
-              Icon(Icons.arrow_forward_ios),
-            ]),
+            child: Row(
+              children: [Text('See More'), Icon(Icons.arrow_forward_ios)],
+            ),
           ),
         ),
       ],

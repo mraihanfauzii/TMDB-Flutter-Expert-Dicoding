@@ -58,5 +58,14 @@ void main() {
     test('kDrawerTheme is not null', () {
       expect(kDrawerTheme.backgroundColor, isA<Color>());
     });
+
+    test('Check each property in kTextTheme', () {
+      // headlineMedium, headlineSmall, labelMedium, bodyMedium
+      final textTheme = kTextTheme;
+      expect(textTheme.headlineMedium, isNotNull);
+      expect(textTheme.headlineSmall, isNotNull);
+      expect(textTheme.labelMedium, isNotNull);
+      expect(textTheme.bodyMedium, isNotNull);
+    });
   });
 }

@@ -29,36 +29,44 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   }
 
   Future<void> _onFetchMovieDetail(
-      FetchMovieDetail event, Emitter<MovieDetailState> emit) async {
+    FetchMovieDetail event,
+    Emitter<MovieDetailState> emit,
+  ) async {
     emit(state.copyWith(movieState: RequestState.Loading));
     final detailResult = await getMovieDetail.execute(event.id);
-    final recommendationResult =
-        await getMovieRecommendations.execute(event.id);
+    final recommendationResult = await getMovieRecommendations.execute(
+      event.id,
+    );
 
     detailResult.fold(
       (failure) {
-        emit(state.copyWith(
-          movieState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            movieState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (movie) async {
-        emit(state.copyWith(
-          movieDetail: movie,
-          movieState: RequestState.Loaded,
-        ));
+        emit(
+          state.copyWith(movieDetail: movie, movieState: RequestState.Loaded),
+        );
         recommendationResult.fold(
           (failure) {
-            emit(state.copyWith(
-              recommendationState: RequestState.Error,
-              message: failure.message,
-            ));
+            emit(
+              state.copyWith(
+                recommendationState: RequestState.Error,
+                message: failure.message,
+              ),
+            );
           },
           (movies) {
-            emit(state.copyWith(
-              recommendations: movies,
-              recommendationState: RequestState.Loaded,
-            ));
+            emit(
+              state.copyWith(
+                recommendations: movies,
+                recommendationState: RequestState.Loaded,
+              ),
+            );
           },
         );
       },
@@ -66,7 +74,9 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   }
 
   Future<void> _onAddWatchlist(
-      AddWatchlist event, Emitter<MovieDetailState> emit) async {
+    AddWatchlist event,
+    Emitter<MovieDetailState> emit,
+  ) async {
     final result = await saveWatchlist.execute(event.movie);
     result.fold(
       (failure) {
@@ -80,7 +90,9 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   }
 
   Future<void> _onRemoveWatchlist(
-      RemoveFromWatchlist event, Emitter<MovieDetailState> emit) async {
+    RemoveFromWatchlist event,
+    Emitter<MovieDetailState> emit,
+  ) async {
     final result = await removeWatchlist.execute(event.movie);
     result.fold(
       (failure) {
@@ -94,7 +106,9 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   }
 
   Future<void> _onLoadWatchlistStatus(
-      LoadWatchlistStatus event, Emitter<MovieDetailState> emit) async {
+    LoadWatchlistStatus event,
+    Emitter<MovieDetailState> emit,
+  ) async {
     final result = await getWatchListStatus.execute(event.id);
     emit(state.copyWith(isAddedToWatchlist: result));
   }

@@ -8,17 +8,20 @@ class TopRatedTvBloc extends Bloc<TopRatedTvEvent, TopRatedTvState> {
   final GetTopRatedTvs getTopRatedTvs;
 
   TopRatedTvBloc({required this.getTopRatedTvs})
-      : super(const TopRatedTvState()) {
+    : super(const TopRatedTvState()) {
     on<FetchTopRatedTv>(_onFetchTopRatedTv);
   }
 
   Future<void> _onFetchTopRatedTv(
-      FetchTopRatedTv event, Emitter<TopRatedTvState> emit) async {
+    FetchTopRatedTv event,
+    Emitter<TopRatedTvState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getTopRatedTvs.execute();
     result.fold(
       (failure) => emit(
-          state.copyWith(state: RequestState.Error, message: failure.message)),
+        state.copyWith(state: RequestState.Error, message: failure.message),
+      ),
       (tvs) => emit(state.copyWith(state: RequestState.Loaded, tvs: tvs)),
     );
   }

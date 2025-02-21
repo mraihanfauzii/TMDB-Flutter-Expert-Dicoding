@@ -117,4 +117,9 @@ class DatabaseHelper {
     final results = await db!.query(_tblWatchlistTv);
     return results;
   }
+
+  // Hanya untuk keperluan test
+  void openDatabaseOnCreate(Database db, int version) {
+    _onCreate(db, 1);
+  }
 }

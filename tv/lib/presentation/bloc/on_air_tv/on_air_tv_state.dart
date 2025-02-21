@@ -13,11 +13,7 @@ class OnAirTvState extends Equatable {
     this.message = '',
   });
 
-  OnAirTvState copyWith({
-    RequestState? state,
-    List<Tv>? tvs,
-    String? message,
-  }) {
+  OnAirTvState copyWith({RequestState? state, List<Tv>? tvs, String? message}) {
     return OnAirTvState(
       state: state ?? this.state,
       tvs: tvs ?? this.tvs,

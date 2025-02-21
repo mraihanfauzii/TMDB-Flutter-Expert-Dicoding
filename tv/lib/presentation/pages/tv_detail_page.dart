@@ -32,11 +32,11 @@ class _TvDetailPageState extends State<TvDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Gunakan BlocListener untuk mendeteksi perubahan watchlistMessage dan menampilkan SnackBar
       body: BlocListener<TvDetailBloc, TvDetailState>(
-        listenWhen: (previous, current) =>
-            previous.watchlistMessage != current.watchlistMessage &&
-            current.watchlistMessage.isNotEmpty,
+        listenWhen:
+            (previous, current) =>
+                previous.watchlistMessage != current.watchlistMessage &&
+                current.watchlistMessage.isNotEmpty,
         listener: (context, state) {
           final message = state.watchlistMessage;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +44,6 @@ class _TvDetailPageState extends State<TvDetailPage> {
               content: Text(message),
               backgroundColor: Colors.white,
               behavior: SnackBarBehavior.floating,
-              // Optional: tambahkan style text jika perlu
             ),
           );
         },
@@ -94,8 +93,9 @@ class DetailContent extends StatelessWidget {
           imageUrl: '$BASE_IMAGE_URL${tv.posterPath}',
           width: screenWidth,
           fit: BoxFit.cover,
-          placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
+          placeholder:
+              (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
 
@@ -126,29 +126,36 @@ class DetailContent extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 if (!isAddedWatchlist) {
-                                  context
-                                      .read<TvDetailBloc>()
-                                      .add(AddWatchlistTv(tv));
+                                  context.read<TvDetailBloc>().add(
+                                    AddWatchlistTv(tv),
+                                  );
                                 } else {
                                   // Perbaikan: panggil event RemoveWatchlistTvEvent tanpa cast
-                                  context
-                                      .read<TvDetailBloc>()
-                                      .add(RemoveWatchlistTvEvent(tv));
+                                  context.read<TvDetailBloc>().add(
+                                    RemoveWatchlistTvEvent(tv),
+                                  );
                                 }
                               },
                               style: FilledButton.styleFrom(
-                                  backgroundColor: kMikadoYellow),
+                                backgroundColor: kMikadoYellow,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   isAddedWatchlist
-                                      ? const Icon(Icons.check,
-                                          color: kRichBlack)
-                                      : const Icon(Icons.add,
-                                          color: kRichBlack),
+                                      ? const Icon(
+                                        Icons.check,
+                                        color: kRichBlack,
+                                      )
+                                      : const Icon(
+                                        Icons.add,
+                                        color: kRichBlack,
+                                      ),
                                   const SizedBox(width: 4),
-                                  const Text('Watchlist',
-                                      style: TextStyle(color: Colors.black)),
+                                  const Text(
+                                    'Watchlist',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
                                 ],
                               ),
                             ),
@@ -167,13 +174,16 @@ class DetailContent extends StatelessWidget {
                                   rating: tv.voteAverage / 2,
                                   itemCount: 5,
                                   itemSize: 24,
-                                  itemBuilder: (context, index) => const Icon(
-                                      Icons.star,
-                                      color: kMikadoYellow),
+                                  itemBuilder:
+                                      (context, index) => const Icon(
+                                        Icons.star,
+                                        color: kMikadoYellow,
+                                      ),
                                 ),
-                                Text('${tv.voteAverage}',
-                                    style:
-                                        const TextStyle(color: Colors.white)),
+                                Text(
+                                  '${tv.voteAverage}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -242,9 +252,10 @@ class DetailContent extends StatelessWidget {
             child: Row(
               children: [
                 CachedNetworkImage(
-                  imageUrl: season.posterPath != null
-                      ? '$BASE_IMAGE_URL${season.posterPath}'
-                      : 'https://via.placeholder.com/150',
+                  imageUrl:
+                      season.posterPath != null
+                          ? '$BASE_IMAGE_URL${season.posterPath}'
+                          : 'https://via.placeholder.com/150',
                   width: 80,
                   height: 120,
                   fit: BoxFit.cover,
@@ -276,11 +287,15 @@ class DetailContent extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.star,
-                              size: 16, color: Colors.yellowAccent),
+                          const Icon(
+                            Icons.star,
+                            size: 16,
+                            color: Colors.yellowAccent,
+                          ),
                           const SizedBox(width: 4),
                           Text(
-                              '${(season.voteAverage * 10).toStringAsFixed(0)}%'),
+                            '${(season.voteAverage * 10).toStringAsFixed(0)}%',
+                          ),
                         ],
                       ),
                     ],
@@ -316,11 +331,13 @@ class DetailContent extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 child: CachedNetworkImage(
-                  imageUrl: tvRec.posterPath != null
-                      ? '$BASE_IMAGE_URL${tvRec.posterPath}'
-                      : 'https://via.placeholder.com/150',
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
+                  imageUrl:
+                      tvRec.posterPath != null
+                          ? '$BASE_IMAGE_URL${tvRec.posterPath}'
+                          : 'https://via.placeholder.com/150',
+                  placeholder:
+                      (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                   width: 100,
                   fit: BoxFit.cover,

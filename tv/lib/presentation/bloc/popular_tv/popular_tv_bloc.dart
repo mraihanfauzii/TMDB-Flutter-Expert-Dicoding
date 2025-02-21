@@ -12,12 +12,15 @@ class PopularTvBloc extends Bloc<PopularTvEvent, PopularTvState> {
   }
 
   Future<void> _onFetchPopularTv(
-      FetchPopularTv event, Emitter<PopularTvState> emit) async {
+    FetchPopularTv event,
+    Emitter<PopularTvState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getPopularTvs.execute();
     result.fold(
       (failure) => emit(
-          state.copyWith(state: RequestState.Error, message: failure.message)),
+        state.copyWith(state: RequestState.Error, message: failure.message),
+      ),
       (tvs) => emit(state.copyWith(state: RequestState.Loaded, tvs: tvs)),
     );
   }

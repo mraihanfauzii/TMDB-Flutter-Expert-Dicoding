@@ -14,10 +14,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class MovieDetailPage extends StatefulWidget {
   static const ROUTE_NAME = '/detail';
   final int id;
+
   const MovieDetailPage({super.key, required this.id});
 
   @override
-  _MovieDetailPageState createState() => _MovieDetailPageState();
+  State<MovieDetailPage> createState() => _MovieDetailPageState();
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
@@ -32,16 +33,17 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<MovieDetailBloc, MovieDetailState>(
-        listenWhen: (previous, current) =>
-            previous.watchlistMessage != current.watchlistMessage &&
-            current.watchlistMessage.isNotEmpty,
+        listenWhen:
+            (previous, current) =>
+                previous.watchlistMessage != current.watchlistMessage &&
+                current.watchlistMessage.isNotEmpty,
         listener: (context, state) {
           final message = state.watchlistMessage;
           if (message == 'Added to Watchlist' ||
               message == 'Removed from Watchlist') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(message)));
           } else {
             showDialog(
               context: context,
@@ -60,6 +62,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   movie: state.movieDetail!,
                   recommendations: state.recommendations,
                   isAddedWatchlist: state.isAddedToWatchlist,
+                  recommendationState: state.recommendationState,
+                  recommendationErrorMessage: state.message,
                 ),
               );
             } else {
@@ -76,11 +80,16 @@ class DetailContent extends StatelessWidget {
   final MovieDetail movie;
   final List<Movie> recommendations;
   final bool isAddedWatchlist;
+  final RequestState recommendationState;
+  final String recommendationErrorMessage;
+
   const DetailContent({
     super.key,
     required this.movie,
     required this.recommendations,
     required this.isAddedWatchlist,
+    required this.recommendationState,
+    required this.recommendationErrorMessage,
   });
 
   @override
@@ -91,8 +100,9 @@ class DetailContent extends StatelessWidget {
         CachedNetworkImage(
           imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
           width: screenWidth,
-          placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
+          placeholder:
+              (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
         Container(
@@ -122,25 +132,31 @@ class DetailContent extends StatelessWidget {
                               ),
                               onPressed: () {
                                 if (!isAddedWatchlist) {
-                                  context
-                                      .read<MovieDetailBloc>()
-                                      .add(AddWatchlist(movie));
+                                  context.read<MovieDetailBloc>().add(
+                                    AddWatchlist(movie),
+                                  );
                                 } else {
-                                  context
-                                      .read<MovieDetailBloc>()
-                                      .add(RemoveFromWatchlist(movie));
+                                  context.read<MovieDetailBloc>().add(
+                                    RemoveFromWatchlist(movie),
+                                  );
                                 }
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   isAddedWatchlist
-                                      ? const Icon(Icons.check,
-                                          color: kRichBlack)
-                                      : const Icon(Icons.add,
-                                          color: kRichBlack),
-                                  const Text('Watchlist',
-                                      style: TextStyle(color: kRichBlack)),
+                                      ? const Icon(
+                                        Icons.check,
+                                        color: kRichBlack,
+                                      )
+                                      : const Icon(
+                                        Icons.add,
+                                        color: kRichBlack,
+                                      ),
+                                  const Text(
+                                    'Watchlist',
+                                    style: TextStyle(color: kRichBlack),
+                                  ),
                                 ],
                               ),
                             ),
@@ -151,12 +167,14 @@ class DetailContent extends StatelessWidget {
                                 RatingBarIndicator(
                                   rating: movie.voteAverage / 2,
                                   itemCount: 5,
-                                  itemBuilder: (context, index) => const Icon(
-                                      Icons.star,
-                                      color: kMikadoYellow),
+                                  itemBuilder:
+                                      (context, index) => const Icon(
+                                        Icons.star,
+                                        color: kMikadoYellow,
+                                      ),
                                   itemSize: 24,
                                 ),
-                                Text('${movie.voteAverage}')
+                                Text('${movie.voteAverage}'),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -164,16 +182,19 @@ class DetailContent extends StatelessWidget {
                             Text(movie.overview),
                             const SizedBox(height: 16),
                             Text('Recommendations', style: kHeading6),
-                            BlocBuilder<MovieDetailBloc, MovieDetailState>(
-                              builder: (context, state) {
-                                if (state.recommendationState ==
+                            Builder(
+                              builder: (context) {
+                                if (recommendationState ==
                                     RequestState.Loading) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (state.recommendationState ==
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      key: const Key('recommendation_loading'),
+                                    ),
+                                  );
+                                } else if (recommendationState ==
                                     RequestState.Error) {
-                                  return Text(state.message);
-                                } else if (state.recommendationState ==
+                                  return Text(recommendationErrorMessage);
+                                } else if (recommendationState ==
                                     RequestState.Loaded) {
                                   return SizedBox(
                                     height: 150,
@@ -185,6 +206,9 @@ class DetailContent extends StatelessWidget {
                                         return Padding(
                                           padding: const EdgeInsets.all(4.0),
                                           child: InkWell(
+                                            key: Key(
+                                              'recommendation_item_$index',
+                                            ),
                                             onTap: () {
                                               Navigator.pushReplacementNamed(
                                                 context,
@@ -195,14 +219,19 @@ class DetailContent extends StatelessWidget {
                                             child: ClipRRect(
                                               borderRadius:
                                                   const BorderRadius.all(
-                                                      Radius.circular(8)),
+                                                    Radius.circular(8),
+                                                  ),
                                               child: CachedNetworkImage(
                                                 imageUrl:
                                                     'https://image.tmdb.org/t/p/w500${movieRec.posterPath}',
-                                                placeholder: (context, url) =>
-                                                    const Center(
-                                                        child:
-                                                            CircularProgressIndicator()),
+                                                placeholder:
+                                                    (
+                                                      context,
+                                                      url,
+                                                    ) => const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         const Icon(Icons.error),
@@ -236,6 +265,7 @@ class DetailContent extends StatelessWidget {
             },
           ),
         ),
+        // Tombol back
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
@@ -246,7 +276,7 @@ class DetailContent extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -255,8 +285,12 @@ class DetailContent extends StatelessWidget {
       genres.map((g) => g.name).join(', ');
 
   String _showDuration(int runtime) {
-    final int hours = runtime ~/ 60;
-    final int minutes = runtime % 60;
-    return hours > 0 ? '${hours}h ${minutes}m' : '${minutes}m';
+    final hours = runtime ~/ 60;
+    final minutes = runtime % 60;
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
   }
 }

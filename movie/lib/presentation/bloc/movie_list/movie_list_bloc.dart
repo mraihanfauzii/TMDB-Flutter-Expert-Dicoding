@@ -20,28 +20,36 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   }
 
   Future<void> _onFetchMovies(
-      FetchMovies event, Emitter<MovieListState> emit) async {
+    FetchMovies event,
+    Emitter<MovieListState> emit,
+  ) async {
     // Pertama, set semua state ke Loading
-    emit(state.copyWith(
-      nowPlayingState: RequestState.Loading,
-      popularState: RequestState.Loading,
-      topRatedState: RequestState.Loading,
-    ));
+    emit(
+      state.copyWith(
+        nowPlayingState: RequestState.Loading,
+        popularState: RequestState.Loading,
+        topRatedState: RequestState.Loading,
+      ),
+    );
 
     // Fetch Now Playing
     final nowPlayingResult = await getNowPlayingMovies.execute();
     nowPlayingResult.fold(
       (failure) {
-        emit(state.copyWith(
-          nowPlayingState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            nowPlayingState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (nowPlayingMovies) {
-        emit(state.copyWith(
-          nowPlayingState: RequestState.Loaded,
-          nowPlayingMovies: nowPlayingMovies,
-        ));
+        emit(
+          state.copyWith(
+            nowPlayingState: RequestState.Loaded,
+            nowPlayingMovies: nowPlayingMovies,
+          ),
+        );
       },
     );
 
@@ -49,16 +57,20 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     final popularResult = await getPopularMovies.execute();
     popularResult.fold(
       (failure) {
-        emit(state.copyWith(
-          popularState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            popularState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (popularMovies) {
-        emit(state.copyWith(
-          popularState: RequestState.Loaded,
-          popularMovies: popularMovies,
-        ));
+        emit(
+          state.copyWith(
+            popularState: RequestState.Loaded,
+            popularMovies: popularMovies,
+          ),
+        );
       },
     );
 
@@ -66,16 +78,20 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     final topRatedResult = await getTopRatedMovies.execute();
     topRatedResult.fold(
       (failure) {
-        emit(state.copyWith(
-          topRatedState: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            topRatedState: RequestState.Error,
+            message: failure.message,
+          ),
+        );
       },
       (topRatedMovies) {
-        emit(state.copyWith(
-          topRatedState: RequestState.Loaded,
-          topRatedMovies: topRatedMovies,
-        ));
+        emit(
+          state.copyWith(
+            topRatedState: RequestState.Loaded,
+            topRatedMovies: topRatedMovies,
+          ),
+        );
       },
     );
   }

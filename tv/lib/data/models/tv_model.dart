@@ -30,13 +30,13 @@ class TvModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "overview": overview,
-        "poster_path": posterPath,
-        "vote_average": voteAverage,
-        "first_air_date": firstAirDate,
-      };
+    "id": id,
+    "name": name,
+    "overview": overview,
+    "poster_path": posterPath,
+    "vote_average": voteAverage,
+    "first_air_date": firstAirDate,
+  };
 
   Tv toEntity() {
     return Tv(
@@ -50,6 +50,12 @@ class TvModel extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, name, overview, posterPath, voteAverage, firstAirDate];
+  List<Object?> get props => [
+    id,
+    name,
+    overview,
+    posterPath,
+    voteAverage,
+    firstAirDate,
+  ];
 }

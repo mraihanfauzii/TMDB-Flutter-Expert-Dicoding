@@ -32,17 +32,15 @@ class _SeasonDetailPageState extends State<SeasonDetailPage> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<SeasonDetailBloc>()
-        .add(FetchSeasonDetail(widget.tvId, widget.seasonNumber));
+    context.read<SeasonDetailBloc>().add(
+      FetchSeasonDetail(widget.tvId, widget.seasonNumber),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Season ${widget.seasonNumber}'),
-      ),
+      appBar: AppBar(title: Text('Season ${widget.seasonNumber}')),
       body: BlocBuilder<SeasonDetailBloc, SeasonDetailState>(
         builder: (context, state) {
           if (state.state == RequestState.Loading) {

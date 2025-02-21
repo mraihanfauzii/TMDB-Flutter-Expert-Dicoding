@@ -39,23 +39,26 @@ class TvDetailResponse extends Equatable {
           rawGenres == null ? [] : (rawGenres as List).map((g) => g).toList(),
       numberOfEpisodes: json["number_of_episodes"] ?? 0,
       numberOfSeasons: json["number_of_seasons"] ?? 0,
-      seasons: rawSeasons == null
-          ? []
-          : (rawSeasons as List).map((s) => SeasonModel.fromJson(s)).toList(),
+      seasons:
+          rawSeasons == null
+              ? []
+              : (rawSeasons as List)
+                  .map((s) => SeasonModel.fromJson(s))
+                  .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "poster_path": posterPath,
-        "overview": overview,
-        "vote_average": voteAverage,
-        "genres": genres,
-        "number_of_episodes": numberOfEpisodes,
-        "number_of_seasons": numberOfSeasons,
-        "seasons": seasons.map((s) => s.toJson()).toList(),
-      };
+    "id": id,
+    "name": name,
+    "poster_path": posterPath,
+    "overview": overview,
+    "vote_average": voteAverage,
+    "genres": genres,
+    "number_of_episodes": numberOfEpisodes,
+    "number_of_seasons": numberOfSeasons,
+    "seasons": seasons.map((s) => s.toJson()).toList(),
+  };
 
   TvDetail toEntity() {
     final genreNames = genres.map((g) => g['name'] as String).toList();
@@ -74,14 +77,14 @@ class TvDetailResponse extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        posterPath,
-        overview,
-        voteAverage,
-        genres,
-        numberOfEpisodes,
-        numberOfSeasons,
-        seasons,
-      ];
+    id,
+    name,
+    posterPath,
+    overview,
+    voteAverage,
+    genres,
+    numberOfEpisodes,
+    numberOfSeasons,
+    seasons,
+  ];
 }

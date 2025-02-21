@@ -8,26 +8,24 @@ class MovieSearchBloc extends Bloc<MovieSearchEvent, MovieSearchState> {
   final SearchMovies searchMovies;
 
   MovieSearchBloc({required this.searchMovies})
-      : super(const MovieSearchState()) {
+    : super(const MovieSearchState()) {
     on<FetchMovieSearch>(_onFetchMovieSearch);
   }
 
   Future<void> _onFetchMovieSearch(
-      FetchMovieSearch event, Emitter<MovieSearchState> emit) async {
+    FetchMovieSearch event,
+    Emitter<MovieSearchState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await searchMovies.execute(event.query);
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          state: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(state: RequestState.Error, message: failure.message),
+        );
       },
       (moviesData) {
-        emit(state.copyWith(
-          state: RequestState.Loaded,
-          movies: moviesData,
-        ));
+        emit(state.copyWith(state: RequestState.Loaded, movies: moviesData));
       },
     );
   }

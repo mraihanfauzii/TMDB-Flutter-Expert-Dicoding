@@ -1,15 +1,16 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:core/utils/failure.dart';
+import 'package:core/utils/state_enum.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:tv/domain/entities/tv.dart';
 import 'package:tv/domain/usecases/get_top_rated_tvs.dart';
 import 'package:tv/presentation/bloc/top_rated_tv/top_rated_tv_bloc.dart';
 import 'package:tv/presentation/bloc/top_rated_tv/top_rated_tv_event.dart';
 import 'package:tv/presentation/bloc/top_rated_tv/top_rated_tv_state.dart';
-import 'package:core/utils/failure.dart';
-import 'package:core/utils/state_enum.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'top_rated_tv_bloc_test.mocks.dart';
 
@@ -23,6 +24,49 @@ void main() {
     bloc = TopRatedTvBloc(getTopRatedTvs: mockGetTopRatedTvs);
   });
 
+  // ---------------------
+  // EVENT COVERAGE
+  // ---------------------
+  group('TopRatedTvEvent', () {
+    test('FetchTopRatedTv props', () {
+      final event = FetchTopRatedTv();
+      expect(event.props, []);
+    });
+  });
+
+  // ---------------------
+  // STATE COVERAGE
+  // ---------------------
+  group('TopRatedTvState', () {
+    test('supports value equality', () {
+      expect(const TopRatedTvState(), const TopRatedTvState());
+    });
+
+    test('props test', () {
+      const state = TopRatedTvState(
+        state: RequestState.Loading,
+        tvs: [],
+        message: 'error msg',
+      );
+      expect(state.props, [RequestState.Loading, [], 'error msg']);
+    });
+
+    test('copyWith test', () {
+      const state = TopRatedTvState();
+      final newState = state.copyWith(
+        state: RequestState.Loaded,
+        tvs: [Tv(id: 1, name: 'xx', overview: '', posterPath: '', voteAverage: 7, firstAirDate: '2022')],
+        message: 'hello',
+      );
+      expect(newState.state, RequestState.Loaded);
+      expect(newState.tvs.length, 1);
+      expect(newState.message, 'hello');
+    });
+  });
+
+  // ---------------------
+  // BLOC TEST
+  // ---------------------
   final tTv = Tv(
     id: 1,
     name: 'Test TV',

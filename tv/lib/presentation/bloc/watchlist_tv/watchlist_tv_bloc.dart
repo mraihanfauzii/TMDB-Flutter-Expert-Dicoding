@@ -8,18 +8,21 @@ class WatchlistTvBloc extends Bloc<WatchlistTvEvent, WatchlistTvState> {
   final GetWatchlistTvs getWatchlistTvs;
 
   WatchlistTvBloc({required this.getWatchlistTvs})
-      : super(const WatchlistTvState()) {
+    : super(const WatchlistTvState()) {
     on<FetchWatchlistTv>(_onFetchWatchlistTv);
   }
 
   Future<void> _onFetchWatchlistTv(
-      FetchWatchlistTv event, Emitter<WatchlistTvState> emit) async {
+    FetchWatchlistTv event,
+    Emitter<WatchlistTvState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getWatchlistTvs.execute();
     result.fold(
       (failure) {
-        emit(state.copyWith(
-            state: RequestState.Error, message: failure.message));
+        emit(
+          state.copyWith(state: RequestState.Error, message: failure.message),
+        );
       },
       (tvs) {
         emit(state.copyWith(state: RequestState.Loaded, tvs: tvs));

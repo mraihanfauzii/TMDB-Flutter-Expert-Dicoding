@@ -1,15 +1,16 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:core/utils/failure.dart';
+import 'package:core/utils/state_enum.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
 import 'package:tv/domain/entities/tv.dart';
 import 'package:tv/domain/usecases/get_watchlist_tvs.dart';
 import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_bloc.dart';
 import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_event.dart';
 import 'package:tv/presentation/bloc/watchlist_tv/watchlist_tv_state.dart';
-import 'package:core/utils/failure.dart';
-import 'package:core/utils/state_enum.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'watchlist_tv_bloc_test.mocks.dart';
 
@@ -23,6 +24,49 @@ void main() {
     bloc = WatchlistTvBloc(getWatchlistTvs: mockGetWatchlistTvs);
   });
 
+  // ---------------------
+  // EVENT COVERAGE
+  // ---------------------
+  group('WatchlistTvEvent', () {
+    test('FetchWatchlistTv props', () {
+      final event = FetchWatchlistTv();
+      expect(event.props, []);
+    });
+  });
+
+  // ---------------------
+  // STATE COVERAGE
+  // ---------------------
+  group('WatchlistTvState', () {
+    test('supports value equality', () {
+      expect(const WatchlistTvState(), const WatchlistTvState());
+    });
+
+    test('props test', () {
+      const state = WatchlistTvState(
+        state: RequestState.Loaded,
+        tvs: [],
+        message: 'err',
+      );
+      expect(state.props, [RequestState.Loaded, [], 'err']);
+    });
+
+    test('copyWith test', () {
+      const state = WatchlistTvState();
+      final newState = state.copyWith(
+        state: RequestState.Error,
+        tvs: [Tv(id: 1, name: 'X', overview: 'Y', posterPath: 'Z', voteAverage: 7, firstAirDate: '2022')],
+        message: 'hello',
+      );
+      expect(newState.state, RequestState.Error);
+      expect(newState.tvs.length, 1);
+      expect(newState.message, 'hello');
+    });
+  });
+
+  // ---------------------
+  // BLOC TEST
+  // ---------------------
   final tTv = Tv(
     id: 1,
     name: 'Test TV',

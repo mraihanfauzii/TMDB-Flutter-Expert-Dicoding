@@ -8,26 +8,24 @@ class PopularMoviesBloc extends Bloc<PopularMoviesEvent, PopularMoviesState> {
   final GetPopularMovies getPopularMovies;
 
   PopularMoviesBloc({required this.getPopularMovies})
-      : super(const PopularMoviesState()) {
+    : super(const PopularMoviesState()) {
     on<FetchPopularMovies>(_onFetchPopularMovies);
   }
 
   Future<void> _onFetchPopularMovies(
-      FetchPopularMovies event, Emitter<PopularMoviesState> emit) async {
+    FetchPopularMovies event,
+    Emitter<PopularMoviesState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getPopularMovies.execute();
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          state: RequestState.Error,
-          message: failure.message,
-        ));
+        emit(
+          state.copyWith(state: RequestState.Error, message: failure.message),
+        );
       },
       (moviesData) {
-        emit(state.copyWith(
-          state: RequestState.Loaded,
-          movies: moviesData,
-        ));
+        emit(state.copyWith(state: RequestState.Loaded, movies: moviesData));
       },
     );
   }

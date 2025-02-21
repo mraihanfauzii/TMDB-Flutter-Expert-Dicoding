@@ -46,7 +46,7 @@ class _MoviePageState extends State<MoviePage> {
               Navigator.pushNamed(context, SearchPage.ROUTE_NAME);
             },
             icon: const Icon(Icons.search),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -56,8 +56,11 @@ class _MoviePageState extends State<MoviePage> {
             children: [
               _buildSubHeading(
                 title: 'Now Playing',
-                onTap: () => Navigator.pushNamed(
-                    context, NowPlayingMoviesPage.ROUTE_NAME),
+                onTap:
+                    () => Navigator.pushNamed(
+                      context,
+                      NowPlayingMoviesPage.ROUTE_NAME,
+                    ),
                 child: BlocBuilder<NowPlayingMoviesBloc, NowPlayingMoviesState>(
                   builder: (context, state) {
                     if (state.state == RequestState.Loading) {
@@ -72,8 +75,11 @@ class _MoviePageState extends State<MoviePage> {
               ),
               _buildSubHeading(
                 title: 'Popular',
-                onTap: () =>
-                    Navigator.pushNamed(context, PopularMoviesPage.ROUTE_NAME),
+                onTap:
+                    () => Navigator.pushNamed(
+                      context,
+                      PopularMoviesPage.ROUTE_NAME,
+                    ),
                 child: BlocBuilder<PopularMoviesBloc, PopularMoviesState>(
                   builder: (context, state) {
                     if (state.state == RequestState.Loading) {
@@ -88,8 +94,11 @@ class _MoviePageState extends State<MoviePage> {
               ),
               _buildSubHeading(
                 title: 'Top Rated',
-                onTap: () =>
-                    Navigator.pushNamed(context, TopRatedMoviesPage.ROUTE_NAME),
+                onTap:
+                    () => Navigator.pushNamed(
+                      context,
+                      TopRatedMoviesPage.ROUTE_NAME,
+                    ),
                 child: BlocBuilder<TopRatedMoviesBloc, TopRatedMoviesState>(
                   builder: (context, state) {
                     if (state.state == RequestState.Loading) {
@@ -119,18 +128,15 @@ class _MoviePageState extends State<MoviePage> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Text(title, style: kHeading6),
-            ),
+            Expanded(child: Text(title, style: kHeading6)),
             if (onTap != null)
               InkWell(
                 onTap: onTap,
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Row(children: [
-                    Text('See More'),
-                    Icon(Icons.arrow_forward_ios),
-                  ]),
+                  child: Row(
+                    children: [Text('See More'), Icon(Icons.arrow_forward_ios)],
+                  ),
                 ),
               ),
           ],
@@ -156,8 +162,11 @@ class MovieHorizontalList extends StatelessWidget {
           final movie = movies[index];
           return InkWell(
             onTap: () {
-              Navigator.pushNamed(context, MovieDetailPage.ROUTE_NAME,
-                  arguments: movie.id);
+              Navigator.pushNamed(
+                context,
+                MovieDetailPage.ROUTE_NAME,
+                arguments: movie.id,
+              );
             },
             child: Container(
               width: 120,
@@ -167,8 +176,9 @@ class MovieHorizontalList extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: '$BASE_IMAGE_URL${movie.posterPath}',
                   fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
+                  placeholder:
+                      (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),

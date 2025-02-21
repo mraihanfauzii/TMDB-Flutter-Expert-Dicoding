@@ -42,7 +42,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: MovieList(movies), // BUKAN MovieCard(movies)
+          body: MovieList(movies),
         ),
       ),
     );

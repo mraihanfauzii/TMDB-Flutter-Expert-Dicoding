@@ -25,9 +25,7 @@ class _PopularTvPageState extends State<PopularTvPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Popular TV'),
-      ),
+      appBar: AppBar(title: const Text('Popular TV')),
       body: BlocBuilder<PopularTvBloc, PopularTvState>(
         builder: (context, state) {
           if (state.state == RequestState.Loading) {

@@ -1,0 +1,12 @@
+{
+  "id": 555,
+  "name": "Season 2",
+  "episodes": [
+    {
+      "id": 9999,
+      "name": "Episode 1",
+      "episode_number": 1,
+      "vote_average": 8.1
+    }
+  ]
+}

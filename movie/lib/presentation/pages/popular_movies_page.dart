@@ -25,17 +25,13 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Popular Movies'),
-      ),
+      appBar: AppBar(title: const Text('Popular Movies')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<PopularMoviesBloc, PopularMoviesState>(
           builder: (context, state) {
             if (state.state == RequestState.Loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             } else if (state.state == RequestState.Loaded) {
               return ListView.builder(
                 itemBuilder: (context, index) {

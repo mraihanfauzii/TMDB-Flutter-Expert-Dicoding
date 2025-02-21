@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "name": "Mock Tv",
+  "overview": "Overview",
+  "poster_path": "/path.jpg",
+  "vote_average": 8.0,
+  "genres": [
+    {
+      "id": 18,
+      "name": "Drama"
+    }
+  ],
+  "number_of_episodes": 10,
+  "number_of_seasons": 1
+}

@@ -16,9 +16,10 @@ class SeasonDetailResponse extends Equatable {
       SeasonDetailResponse(
         id: json['id'],
         name: json['name'] ?? '',
-        episodes: (json['episodes'] as List)
-            .map((e) => EpisodeModel.fromJson(e))
-            .toList(),
+        episodes:
+            (json['episodes'] as List)
+                .map((e) => EpisodeModel.fromJson(e))
+                .toList(),
       );
 
   @override

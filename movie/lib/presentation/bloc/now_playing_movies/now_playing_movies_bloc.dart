@@ -9,18 +9,21 @@ class NowPlayingMoviesBloc
   final GetNowPlayingMovies getNowPlayingMovies;
 
   NowPlayingMoviesBloc({required this.getNowPlayingMovies})
-      : super(const NowPlayingMoviesState()) {
+    : super(const NowPlayingMoviesState()) {
     on<FetchNowPlayingMovies>(_onFetchNowPlayingMovies);
   }
 
   Future<void> _onFetchNowPlayingMovies(
-      FetchNowPlayingMovies event, Emitter<NowPlayingMoviesState> emit) async {
+    FetchNowPlayingMovies event,
+    Emitter<NowPlayingMoviesState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getNowPlayingMovies.execute();
     result.fold(
       (failure) {
-        emit(state.copyWith(
-            state: RequestState.Error, message: failure.message));
+        emit(
+          state.copyWith(state: RequestState.Error, message: failure.message),
+        );
       },
       (moviesData) {
         emit(state.copyWith(state: RequestState.Loaded, movies: moviesData));

@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,13 +7,10 @@ import 'package:movie/presentation/bloc/top_rated_movies/top_rated_movies_bloc.d
 import 'package:movie/presentation/bloc/top_rated_movies/top_rated_movies_state.dart';
 import 'package:movie/presentation/pages/top_rated_movies_page.dart';
 import 'package:core/utils/state_enum.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:bloc_test/bloc_test.dart';
+import 'package:mocktail/mocktail.dart';
 
-import 'top_rated_movies_page_test.mocks.dart';
+class MockTopRatedMoviesBloc extends Mock implements TopRatedMoviesBloc {}
 
-@GenerateMocks([TopRatedMoviesBloc])
 void main() {
   late MockTopRatedMoviesBloc mockBloc;
 
@@ -46,8 +44,8 @@ void main() {
 
   testWidgets('should display CircularProgressIndicator when loading', (tester) async {
     final testState = TopRatedMoviesState(state: RequestState.Loading, movies: [], message: '');
-    when(mockBloc.state).thenReturn(testState);
-    whenListen(
+    when(() => mockBloc.state).thenReturn(testState);
+    whenListen<TopRatedMoviesState>(
       mockBloc,
       Stream<TopRatedMoviesState>.fromIterable([testState]),
       initialState: testState,
@@ -58,8 +56,8 @@ void main() {
 
   testWidgets('should display ListView when data is loaded', (tester) async {
     final testState = TopRatedMoviesState(state: RequestState.Loaded, movies: tMovies, message: '');
-    when(mockBloc.state).thenReturn(testState);
-    whenListen(
+    when(() => mockBloc.state).thenReturn(testState);
+    whenListen<TopRatedMoviesState>(
       mockBloc,
       Stream<TopRatedMoviesState>.fromIterable([testState]),
       initialState: testState,
@@ -70,8 +68,8 @@ void main() {
 
   testWidgets('should display error message when error', (tester) async {
     final testState = TopRatedMoviesState(state: RequestState.Error, movies: [], message: 'Error message');
-    when(mockBloc.state).thenReturn(testState);
-    whenListen(
+    when(() => mockBloc.state).thenReturn(testState);
+    whenListen<TopRatedMoviesState>(
       mockBloc,
       Stream<TopRatedMoviesState>.fromIterable([testState]),
       initialState: testState,

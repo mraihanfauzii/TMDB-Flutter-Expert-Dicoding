@@ -12,12 +12,15 @@ class OnAirTvBloc extends Bloc<OnAirTvEvent, OnAirTvState> {
   }
 
   Future<void> _onFetchOnAirTv(
-      FetchOnAirTv event, Emitter<OnAirTvState> emit) async {
+    FetchOnAirTv event,
+    Emitter<OnAirTvState> emit,
+  ) async {
     emit(state.copyWith(state: RequestState.Loading));
     final result = await getOnAirTvs.execute();
     result.fold(
       (failure) => emit(
-          state.copyWith(state: RequestState.Error, message: failure.message)),
+        state.copyWith(state: RequestState.Error, message: failure.message),
+      ),
       (tvs) => emit(state.copyWith(state: RequestState.Loaded, tvs: tvs)),
     );
   }
