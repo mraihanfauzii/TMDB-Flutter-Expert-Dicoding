@@ -1,3 +1,5 @@
+[![Flutter CI](https://github.com/mraihanfauzii/TMDB-Flutter-Expert-Dicoding/actions/workflows/main.yml/badge.svg)](https://github.com/mraihanfauzii/TMDB-Flutter-Expert-Dicoding/actions/workflows/main.yml)
+
 # a199-flutter-expert-project
 
 Repository ini merupakan starter project submission kelas Flutter Expert Dicoding Indonesia.
